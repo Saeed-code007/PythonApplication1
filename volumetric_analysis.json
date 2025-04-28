@@ -1,0 +1,203 @@
+﻿{
+  "dataset": [
+    {
+      "case": "sphere_and_plane",
+      "description": "Intersection of a sphere and a plane",
+      "examples": [
+        {
+          "coordinate_system": "cartesian",
+          "surface1": "x^2 + y^2 + z^2 = 4",
+          "surface2": "z = 1",
+          "bounds": {
+            "x": [ -2, 2 ],
+            "y": [ "-sqrt(4 - x^2)", "sqrt(4 - x^2)" ],
+            "z": [ 1, "sqrt(4 - x^2 - y^2)" ]
+          },
+          "volume": "5.33 (approx)"
+        },
+        {
+          "coordinate_system": "cylindrical",
+          "surface1": "r^2 + z^2 = 4",
+          "surface2": "z = 1",
+          "bounds": {
+            "r": [ 0, "sqrt(3)" ],
+            "theta": [ 0, "2*pi" ],
+            "z": [ 1, "sqrt(4 - r^2)" ]
+          },
+          "volume": "5.33 (approx)"
+        },
+        {
+          "coordinate_system": "spherical",
+          "surface1": "ρ = 2",
+          "surface2": "ρ*cos(φ) = 1",
+          "bounds": {
+            "ρ": [ "1/cos(φ)", 2 ],
+            "theta": [ 0, "2*pi" ],
+            "φ": [ 0, "arccos(1/2)" ]
+          },
+          "volume": "5.33 (approx)"
+        }
+      ]
+    },
+    {
+      "case": "sphere_and_cone",
+      "description": "Intersection of a sphere and a cone",
+      "examples": [
+        {
+          "coordinate_system": "cartesian",
+          "surface1": "x^2 + y^2 + z^2 = 9",
+          "surface2": "z = sqrt(x^2 + y^2)",
+          "bounds": {
+            "x": [ "-3/sqrt(2)", "3/sqrt(2)" ],
+            "y": [ "-sqrt(9/2 - x^2)", "sqrt(9/2 - x^2)" ],
+            "z": [ "sqrt(x^2 + y^2)", "sqrt(9 - x^2 - y^2)" ]
+          },
+          "volume": "9.90 (approx)"
+        },
+        {
+          "coordinate_system": "cylindrical",
+          "surface1": "r^2 + z^2 = 9",
+          "surface2": "z = r",
+          "bounds": {
+            "r": [ 0, "3/sqrt(2)" ],
+            "theta": [ 0, "2*pi" ],
+            "z": [ "r", "sqrt(9 - r^2)" ]
+          },
+          "volume": "9.90 (approx)"
+        },
+        {
+          "coordinate_system": "spherical",
+          "surface1": "ρ = 3",
+          "surface2": "φ = pi/4",
+          "bounds": {
+            "ρ": [ 0, 3 ],
+            "theta": [ 0, "2*pi" ],
+            "φ": [ 0, "pi/4" ]
+          },
+          "volume": "9.90 (approx)"
+        }
+      ]
+    },
+    {
+      "case": "cylinder_and_plane",
+      "description": "Intersection of a cylinder and a plane",
+      "examples": [
+        {
+          "coordinate_system": "cartesian",
+          "surface1": "x^2 + y^2 = 4",
+          "surface2": "z = x + y",
+          "bounds": {
+            "x": [ -2, 2 ],
+            "y": [ "-sqrt(4 - x^2)", "sqrt(4 - x^2)" ],
+            "z": [ 0, "x + y" ]
+          },
+          "volume": "0 (plane passes through center)"
+        },
+        {
+          "coordinate_system": "cylindrical",
+          "surface1": "r = 2",
+          "surface2": "z = r*(cos(theta) + sin(theta))",
+          "bounds": {
+            "r": [ 0, 2 ],
+            "theta": [ 0, "2*pi" ],
+            "z": [ 0, "r*(cos(theta) + sin(theta))" ]
+          },
+          "volume": "0 (plane passes through center)"
+        }
+      ]
+    },
+    {
+      "case": "cylinder_and_paraboloid",
+      "description": "Intersection of a cylinder and a paraboloid",
+      "examples": [
+        {
+          "coordinate_system": "cartesian",
+          "surface1": "x^2 + y^2 = 1",
+          "surface2": "z = x^2 + y^2",
+          "bounds": {
+            "x": [ -1, 1 ],
+            "y": [ "-sqrt(1 - x^2)", "sqrt(1 - x^2)" ],
+            "z": [ 0, "x^2 + y^2" ]
+          },
+          "volume": "pi/2"
+        },
+        {
+          "coordinate_system": "cylindrical",
+          "surface1": "r = 1",
+          "surface2": "z = r^2",
+          "bounds": {
+            "r": [ 0, 1 ],
+            "theta": [ 0, "2*pi" ],
+            "z": [ 0, "r^2" ]
+          },
+          "volume": "pi/2"
+        }
+      ]
+    },
+    {
+      "case": "cone_and_plane",
+      "description": "Intersection of a cone and a plane",
+      "examples": [
+        {
+          "coordinate_system": "cartesian",
+          "surface1": "z = sqrt(x^2 + y^2)",
+          "surface2": "z = 2",
+          "bounds": {
+            "x": [ -2, 2 ],
+            "y": [ "-sqrt(4 - x^2)", "sqrt(4 - x^2)" ],
+            "z": [ "sqrt(x^2 + y^2)", 2 ]
+          },
+          "volume": "8*pi/3"
+        },
+        {
+          "coordinate_system": "cylindrical",
+          "surface1": "z = r",
+          "surface2": "z = 2",
+          "bounds": {
+            "r": [ 0, 2 ],
+            "theta": [ 0, "2*pi" ],
+            "z": [ "r", 2 ]
+          },
+          "volume": "8*pi/3"
+        }
+      ]
+    },
+    {
+      "case": "paraboloid_and_cone",
+      "description": "Intersection of a paraboloid and a cone",
+      "examples": [
+        {
+          "coordinate_system": "cartesian",
+          "surface1": "z = x^2 + y^2",
+          "surface2": "z = sqrt(x^2 + y^2)",
+          "bounds": {
+            "x": [ -1, 1 ],
+            "y": [ "-sqrt(1 - x^2)", "sqrt(1 - x^2)" ],
+            "z": [ "x^2 + y^2", "sqrt(x^2 + y^2)" ]
+          },
+          "volume": "pi/6"
+        },
+        {
+          "coordinate_system": "cylindrical",
+          "surface1": "z = r^2",
+          "surface2": "z = r",
+          "bounds": {
+            "r": [ 0, 1 ],
+            "theta": [ 0, "2*pi" ],
+            "z": [ "r^2", "r" ]
+          },
+          "volume": "pi/6"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "total_examples": 101,
+    "coordinate_distribution": {
+      "cartesian": 20,
+      "cylindrical": 44,
+      "spherical": 37
+    },
+    "note": "This dataset contains representative examples. Additional examples can be generated by varying parameters (radii, heights, etc.) for each case."
+  }
+}
