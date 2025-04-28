@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AxisAI</title>
+    <!-- TailwindCSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: url('https://cdn.leonardo.ai/users/c06b62ec-2098-4934-954b-7f237ca65f69/generations/9f51ace0-642e-48a0-bb1f-379373c73699/segments/1:4:1/Flux_Dev_black_space_theme_with_white_small_stars_and_make_4_b_0.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .backdrop-blur {
+            backdrop-filter: blur(10px);
+        }
+
+        .cursor {
+            border-right: 2px solid currentColor;
+            animation: blink 0.7s steps(1) infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-4xl w-full bg-white/30 backdrop-blur rounded-3xl p-10 shadow-2xl grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <!-- Left Panel: Animated Text -->
+        <div class="flex flex-col justify-center text-center space-y-6">
+            {% if prediction %}
+            <!-- Always show output message when prediction exists -->
+            <p id="result-msg" class="text-xl font-semibold text-white animate__animated animate__fadeInUp"></p>
+            {% elif show_enter_again %}
+            <!-- Show enter again message when returning from results -->
+            <h1 id="enter-again-text"
+                class="text-3xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400"></h1>
+            {% else %}
+            <!-- Show name/description only first time -->
+            <h1 id="typed-text"
+                class="text-5xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400"></h1>
+            <p id="typed-desc" class="text-lg text-white"></p>
+            {% endif %}
+        </div>
+
+        <!-- Right Panel: Input & Results -->
+        <div>
+            <!-- Only show form when no prediction exists -->
+            {% if not prediction %}
+            <form method="POST" class="space-y-6 animate__animated animate__fadeInUp animate__delay-1s">
+                <div>
+                    <label for="question" class="block text-lg font-semibold text-white">
+                        Enter your math problem:
+                    </label>
+                    <textarea id="question" name="question" rows="4" required
+                              class="w-full mt-3 p-4 rounded-xl border border-white/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition duration-200 ease-in-out resize-none"
+                              placeholder="e.g. Find the volume bounded by z = x^2 + y^2 and z = 4..."></textarea>
+                </div>
+                <button type="submit"
+                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold uppercase tracking-wider shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 group">
+                    <span class="relative">
+                        Predict
+                        <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                             xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 1 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                        </svg>
+                    </span>
+                </button>
+            </form>
+            {% endif %}
+
+            <!-- Display Prediction and Scores on Output -->
+            {% if prediction %}
+            <div class="mt-4 bg-white/80 rounded-xl shadow-lg p-6 border-l-4 border-green-400 animate__animated animate__zoomIn">
+                <h2 class="text-2xl font-bold text-green-700">Prediction:</h2>
+                <p class="mt-2 text-lg text-white">{{ prediction }}</p>
+            </div>
+            {% endif %}
+
+            {% if confidence_scores %}
+            <div class="mt-6 bg-white/80 rounded-xl shadow-lg p-6 border-l-4 border-indigo-400 animate__animated animate__zoomIn animate__delay-1s">
+                <h3 class="text-xl font-semibold text-indigo-700">Confidence Scores:</h3>
+                <ul class="mt-3 space-y-2">
+                    {% for label, score in confidence_scores.items() %}
+                    <li class="flex justify-between">
+                        <span class="capitalize text-white">{{ label }}</span>
+                        <span class="font-mono text-white">{{ '{:.2f}%'.format(score * 100) }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if prediction %}
+            <div class="mt-6 text-center animate__animated animate__fadeInUp animate__delay-2s">
+                <a href="/?enter_again=true"
+                   class="w-full inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold uppercase tracking-wider shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                    Enter Question Again
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Typing Animation Script -->
+    <script>document.addEventListener('DOMContentLoaded', () => {
+      const textEl = document.getElementById('typed-text');
+      const descEl = document.getElementById('typed-desc');
+      const enterAgainEl = document.getElementById('enter-again-text');
+      const resultMsg = document.getElementById('result-msg');
+
+      const title = 'AxisAI';
+      const description = 'AxisAI guides you to the optimal coordinate system—Rectangular, Cylindrical, or Spherical—for solving your integral problems effortlessly.';
+      const resultText = 'Thanks for the patience — we mapped it all out in the best coordinates possible.';
+      const enterAgainMsg = "Let's dive into another problem. What can I solve for you next?";
+
+      // First visit - show name/description
+      if (textEl && descEl) {
+        let charIndex = 0;
+        function typeTitle() {
+          if (charIndex < title.length) {
+            textEl.textContent += title.charAt(charIndex);
+            textEl.classList.add('cursor');
+            charIndex++;
+            setTimeout(typeTitle, 150);
+          } else {
+            textEl.classList.remove('cursor');
+            setTimeout(typeDesc, 500);
+          }
+        }
+
+        let descIndex = 0;
+        function typeDesc() {
+          if (descIndex < description.length) {
+            descEl.textContent += description.charAt(descIndex);
+            descEl.classList.add('cursor');
+            descIndex++;
+            setTimeout(typeDesc, 50);
+          } else {
+            descEl.classList.remove('cursor');
+          }
+        }
+        typeTitle();
+      }
+
+      // Enter again message
+      if (enterAgainEl) {
+        let i = 0;
+        function typeEnterAgain() {
+          if (i < enterAgainMsg.length) {
+            enterAgainEl.textContent += enterAgainMsg.charAt(i);
+            enterAgainEl.classList.add('cursor');
+            i++;
+            setTimeout(typeEnterAgain, 40);
+          } else {
+            enterAgainEl.classList.remove('cursor');
+          }
+        }
+        typeEnterAgain();
+      }
+
+      // Result message
+      if (resultMsg) {
+        let i = 0;
+        function typeResult() {
+          if (i < resultText.length) {
+            resultMsg.textContent += resultText.charAt(i);
+            resultMsg.classList.add('cursor');
+            i++;
+            setTimeout(typeResult, 40);
+          } else {
+            resultMsg.classList.remove('cursor');
+          }
+        }
+        typeResult();
+      }
+    });</script>
+</body>
+</html>
