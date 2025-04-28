@@ -8,7 +8,7 @@ coord_model = joblib.load("coord_system_model.pkl")
 
 
 @app.route("/", methods=["GET", "POST"])
-def index():
+def interface():
     prediction = None
     confidence_scores = {}
     show_enter_again = False
@@ -23,7 +23,7 @@ def index():
         probs = coord_model.predict_proba([question])[0]
         confidence_scores = dict(zip(coord_model.classes_, probs))
 
-    return render_template("index.html",
+    return render_template("interface.html",
                            prediction=prediction,
                            confidence_scores=confidence_scores,
                            show_enter_again=show_enter_again)
